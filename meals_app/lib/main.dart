@@ -1,12 +1,60 @@
 import 'package:flutter/material.dart';
-import './screens/meal_detaiRecepie_screen.dart';
 
+
+
+import './dummy_data.dart';
+
+
+import './screens/filter_screen.dart';
+
+
+import './screens/tabs_screen.dart';
+
+//import 'screens/tabs_screen1.dart';
+import './screens/meal_detaiRecepie_screen.dart';
 import './screens/mealDetailScreen.dart';
 import './screens/categories_screen.dart';
+import './models/meal.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Map<String,bool> _filters ={
+    'gluten':false,
+    'lactose':false,
+    'vegetarian':false,
+    'vegan':false,
+  };
+
+
+List<Meal> _availableMeals =DUMMY_MEALS;
+  void _setFilters(Map<String,bool> filterData){
+    setState(() {
+      _filters = filterData;
+      _availableMeals = DUMMY_MEALS.where((meal) {
+        if(_filters['gluten'] && !meal.isGlutenFree){
+          return false;
+        }
+        if(_filters['lactose'] && !meal.isLactoseFree){
+          return false;
+        }
+        if(_filters['vegetarian'] && !meal.isVegetarian){
+          return false;
+        }
+        if(_filters['vegan'] && !meal.isVegan){
+          return false;
+        }
+        return true;
+      }).toList();
+    });
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -29,10 +77,13 @@ class MyApp extends StatelessWidget {
                   fontWeight: FontWeight.bold),
             ),
       ),
-      home: CategoriesScreen(),
+     // home: CategoriesScreen(),
+     //home: TabsScreen(),
       routes: {
-        '/categoryMeals' : (context) => MealDetailScreen(),
+        '/' : (ctx) => TabsScreen(),
+        '/categoryMeals' : (context) => MealDetailScreen(_availableMeals),
         MealDetailRecepieScreen.routeName : (ctx) => MealDetailRecepieScreen(),
+        FilttersScreen.routeName : (ctx) => FilttersScreen(_filters,_setFilters),
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (ctx) => CategoriesScreen());
