@@ -1,24 +1,40 @@
 import 'package:flutter/material.dart';
 
+import './providers/cart.dart';
+
+import 'package:provider/provider.dart';
+
 import './screens/product_overview_screen.dart';
 import './screens/product_detail_screen.dart';
+import './providers/product.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'MyShop',
-      theme: ThemeData(
-        primarySwatch: Colors.purple,
-        accentColor: Colors.deepOrange,
-        fontFamily: 'Lato',
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          //value: Products(),
+          create: (ctx) => Products(),
+        ),
+        ChangeNotifierProvider(
+         create: (ctx) => Cart(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'MyShop',
+        theme: ThemeData(
+          primarySwatch: Colors.purple,
+          accentColor: Colors.deepOrange,
+          fontFamily: 'Lato',
+        ),
+        home: ProductOverviewScreen(),
+        routes: {
+          ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+        },
       ),
-      home: ProductOverviewScreen(),
-      routes: {
-        ProductDetailScreen.routeName : (ctx) => ProductDetailScreen(),
-      },
     );
   }
 }
