@@ -65,7 +65,11 @@ class Products with ChangeNotifier {
     try {
       final response = await http.get(url);
       // print(json.decode( response.body));
+
       final extarctedData = json.decode(response.body) as Map<String, dynamic>;
+      if (extarctedData == null) {
+        return;
+      }
       final List<Product> loadedProducts = [];
       extarctedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -160,10 +164,10 @@ class Products with ChangeNotifier {
     }
   }
 
-   void deleteProduct(String id) async{
-     final url = Uri.parse(
-          'https://shopapp-59573-default-rtdb.firebaseio.com/products/$id.json');
-          await http.delete(url);
+  void deleteProduct(String id) async {
+    final url = Uri.parse(
+        'https://shopapp-59573-default-rtdb.firebaseio.com/products/$id.json');
+    await http.delete(url);
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
