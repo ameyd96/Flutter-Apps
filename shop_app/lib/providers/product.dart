@@ -43,8 +43,11 @@ class Products with ChangeNotifier {
   // var _showFavoritesOnly =false;
 
   final String authToken;
+  final String userId;
 
-  Products(this.authToken,this._items);
+  Products(this.authToken,this.userId,this._items);
+
+  
   List<Product> get items {
     //   if(_showFavoritesOnly){
     //     return _items.where((prodItem) => prodItem.isFavorite).toList();
@@ -63,7 +66,7 @@ class Products with ChangeNotifier {
   //This below function is for fetching server data and extracted and used
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse(
+    var url = Uri.parse(
         'https://shopapp-59573-default-rtdb.firebaseio.com/products.json?auth=$authToken');
     try {
       final response = await http.get(url);
@@ -73,6 +76,12 @@ class Products with ChangeNotifier {
       if (extarctedData == null) {
         return;
       }
+        url = Uri.parse(
+         'https://shopapp-59573-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken');
+   
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
+
       final List<Product> loadedProducts = [];
       extarctedData.forEach((prodId, prodData) {
         loadedProducts.add(Product(
@@ -80,7 +89,8 @@ class Products with ChangeNotifier {
           title: prodData['title'],
           description: prodData['description'],
           price: prodData['price'],
-          isFavorite: prodData['isFavorite'],
+          // isFavorite: prodData['isFavorite'],
+          isFavorite: favoriteData ==null ? false: favoriteData[prodId] ?? false,
           imageUrl: prodData['imageUrl'],
         ));
 
@@ -103,7 +113,7 @@ class Products with ChangeNotifier {
             'description': product.description,
             'price': product.price,
             'imageUrl': product.imageUrl,
-            'isFavorite': product.isFavorite,
+            //'isFavorite': product.isFavorite,
           }));
       final newProduct = Product(
         id: json.decode(response.body)['name'],
