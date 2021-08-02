@@ -42,6 +42,9 @@ class Products with ChangeNotifier {
 
   // var _showFavoritesOnly =false;
 
+  final String authToken;
+
+  Products(this.authToken,this._items);
   List<Product> get items {
     //   if(_showFavoritesOnly){
     //     return _items.where((prodItem) => prodItem.isFavorite).toList();
@@ -61,7 +64,7 @@ class Products with ChangeNotifier {
 
   Future<void> fetchAndSetProducts() async {
     final url = Uri.parse(
-        'https://shopapp-59573-default-rtdb.firebaseio.com/products.json');
+        'https://shopapp-59573-default-rtdb.firebaseio.com/products.json?auth=$authToken');
     try {
       final response = await http.get(url);
       // print(json.decode( response.body));
@@ -91,7 +94,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProducts(Product product) async {
     final url = Uri.parse(
-        'https://shopapp-59573-default-rtdb.firebaseio.com/products.json');
+        'https://shopapp-59573-default-rtdb.firebaseio.com/products.json?auth=$authToken');
     // return http
     try {
       final response = await http.post(url,
@@ -149,7 +152,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url = Uri.parse(
-          'https://shopapp-59573-default-rtdb.firebaseio.com/products/$id.json');
+          'https://shopapp-59573-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
       await http.patch(url,
           body: json.encode({
             'title': newProduct.title,
@@ -166,7 +169,7 @@ class Products with ChangeNotifier {
 
   void deleteProduct(String id) async {
     final url = Uri.parse(
-        'https://shopapp-59573-default-rtdb.firebaseio.com/products/$id.json');
+        'https://shopapp-59573-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
     await http.delete(url);
     _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
