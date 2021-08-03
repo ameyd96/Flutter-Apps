@@ -35,6 +35,9 @@ class Auth with ChangeNotifier {
     //API_KEy = firebase =>project setting=> webAPiKey
     final url = Uri.parse(
         'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA2eCsgXFvtbC995Gnf4cxSrKVNtsyyO9M');
+// final url = Uri.parse(
+//         'https://www.googleapis.com/identitytoolkit/v3/relyingparty/$urlSegment?key=AIzaSyC13spCwP_f_SalxEbkB-wjedoF8iYENlQ');
+        
     try {
       final response = await http.post(
         url,
